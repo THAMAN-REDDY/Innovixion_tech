@@ -1,0 +1,30 @@
+import requests 
+from bs4 import BeautifulSoup
+import pandas as pd
+def web_scraper(url):
+    re=requests.get(url)
+    #print(re.text)
+    soup=BeautifulSoup(re.content,"html.parser")
+    ans=soup.find("div",class_="arrange__09f24__LDfbs gutter-5__09f24__NN5cr layout-wrap__09f24__GEBlv layout-4-units__09f24__FvTbi css-1qn0b6x")
+    #print(ans.prettify())
+    categories=ans.find_all("p",string=lambda text:"e")
+    category_names=[i.text.strip() for i in categories]
+    df=pd.DataFrame(category_names,columns=['Titles'])
+    file_fmt=input("Enter the file format (excel/csv):").lower()
+    if file_fmt=='excel':
+        name=input("Enter the file name:")
+        #Saves file based on our filename
+        df.to_excel(f"{name}.xlsx",index=True)
+        print("Data is stored in Excel file successfully")
+    elif file_fmt=='csv':
+        name=input("Enter the file name:")
+        #Saves file based on our filename
+        df.to_csv(f"{name}.csv",index=True)
+        print("Data stored in CSV file successfully")
+    else:
+        print("Error..!Invalid File Format..!!")
+#Example usage of scrape website
+url_link="https://www.yelp.com/"
+# For user input>>
+# url=input("Enter custom URL:")
+web_scraper(url_link)
